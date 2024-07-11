@@ -22,28 +22,34 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        var authorization = request.getHeader("Authorization");
+        var servletPath = request.getServletPath();
 
-        var authEncode = authorization.substring("Basic".length()).trim();
+        if(servletPath.equals("/tasks/")) {
+            var authorization = request.getHeader("Authorization");
 
-        byte[] authDecode = Base64.getDecoder().decode(authEncode);
+            var authEncoded = authorization.substring("Basic".length()).trim();
 
-        var authString = new String(authDecode);
+            byte[] authDecode = Base64.getDecoder().decode(authEncoded);
 
-        String[] credential = authString.split(":");
-        String username = credential[0];
-        String password = credential[1];
+            var authString = new String(authDecode);
 
-        var user = this.userRepository.findByUsername(username);
-        if (user == null) {
-            response.sendError(401, "Unauthorized");
-        } else {
-            var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
-            if(passwordVerify.verified){
-                filterChain.doFilter(request, response);
-            } else {
+            String[] credentials = authString.split(":");
+            String username = credentials[0];
+            String password = credentials[1];
+
+            var user = this.userRepository.findByUsername(username);
+            if (user == null) {
                 response.sendError(401, "Unauthorized");
+            } else {
+                var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+                if(passwordVerify.verified){
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.sendError(401, "Unauthorized");
+                }
             }
+        } else {
+            filterChain.doFilter(request, response);
         }
 
     }
