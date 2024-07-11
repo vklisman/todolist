@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ public class TaskModel {
 
     @Column(length = 50)
     private String title;
-    private LocalDateTime starAt;
+    private LocalDateTime startAt;
     private LocalDateTime endAt;
     private String priority;
 
