@@ -1,4 +1,4 @@
-package br.com.vklisman.todolist.user;
+package br.com.vklisman.todolist.task;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,21 +7,26 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Entity(name = "tb_users")
-public class UserModel {
+@Entity(name = "tb_tasks")
+public class TaskModel {
 
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
+    private String description;
 
-    @Column(unique = true)
-    public String username;
-    private String name;
-    public String password;
+    @Column(length = 50)
+    private String title;
+    private LocalDateTime starAt;
+    private LocalDateTime endAt;
+    private String priority;
+
+    private UUID idUser;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
